@@ -4,8 +4,8 @@ import * as fsPath from 'node:path'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
 
-const defineMakefileContents = ({generatedFileNotice}) => 
-`${generatedFileNotice}
+const defineMakefileContents = ({ generatedFileNotice }) =>
+  `${generatedFileNotice}
 
 .DELETE_ON_ERROR:
 
@@ -16,7 +16,7 @@ include make/*.mk
 endif
 `
 
-const defineFinalTargetsContents = ({generatedFileNotice, noDoc, noLint, noTest }) => {
+const defineFinalTargetsContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
   let contents = `${generatedFileNotice}
 
 .PRECIOUS: $(PRECIOUS_TARGETS)
@@ -37,7 +37,7 @@ PHONY_TARGETS+=doc
 `
   }
   else {
-    contents +=`
+    contents += `
 all: build
 `
   }
@@ -79,8 +79,8 @@ const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) 
     throw new Error("Did not find 'package.json'. This command must be run from the root of a package; bailing out.")
   } // else assume good to go
 
-  const generatedFileNotice = 
-    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName: '@liquid-labs/catalyst-lib-makefiles', commentToken: '#' })
+  const generatedFileNotice =
+    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
 
   const makefileContents = defineMakefileContents({ generatedFileNotice })
 
@@ -88,7 +88,7 @@ const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) 
 
   Promise.all([
     fs.mkdir('make'),
-    fs.writeFile('Makefile', makefileContents),
+    fs.writeFile('Makefile', makefileContents)
   ])
 
   await fs.writeFile(fsPath.join('make', '95-final-targets.mk'), finalTargetsContents)
