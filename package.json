@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "UNLICENSED",
@@ -13,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/liquid-labs/catalyst-lib-makefiles/issues"
   },
-  "homepage": "https://github.com/liquid-labs/catalyst-lib-makefiles#readme"
+  "homepage": "https://github.com/liquid-labs/catalyst-lib-makefiles#readme",
+  "devDependencies": {
+    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.22"
+  },
+  "dependencies": {
+    "@liquid-labs/catalyst-defaults": "^1.0.0-alpha.4",
+    "@liquid-labs/wrap-text": "^1.0.0-alpha.6"
+  }
 }
