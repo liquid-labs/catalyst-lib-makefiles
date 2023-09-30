@@ -1,0 +1,21 @@
+Test git rev: 334fd958ff102cb20bbc6f03cd0a9294497a01b1
+PASS test/setup-makefile-infra.test.js
+  setupMakefileInfra
+    ✓ raises an error of no 'package.json' found
+    ✓ produces expected output files (when ignoring package) (13 ms)
+
+------------------------------|---------|----------|---------|---------|-------------------
+File                          | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------------------|---------|----------|---------|---------|-------------------
+All files                     |   96.77 |    72.22 |    87.5 |   96.61 |                   
+ src                          |      96 |    66.66 |   83.33 |   95.83 |                   
+  index.mjs                   |       0 |        0 |       0 |       0 | 1                 
+  setup-makefile-infra.mjs    |   97.95 |       75 |     100 |   97.87 | 66                
+ src/lib                      |     100 |    88.88 |     100 |     100 |                   
+  get-my-name-and-version.mjs |     100 |    88.88 |     100 |     100 | 7                 
+------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        0.341 s, estimated 1 s
+Ran all test suites.
