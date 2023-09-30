@@ -7,7 +7,7 @@ import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
 import { getMyNameAndVersion } from './lib/get-my-name-and-version'
 
 const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
-  let contents=`${generatedFileNotice}
+  let contents = `${generatedFileNotice}
 
 .DELETE_ON_ERROR:
 
@@ -17,19 +17,19 @@ BUILD_TARGETS:=
 `
 
   if (noDoc !== true) {
-    `
+    contents += `
 DOC_TARGETS:=
 `
   }
 
   if (noLint !== true) {
-    `
+    contents += `
 LINT_TARGETS:=
 `
   }
 
   if (noTest !== true) {
-    `
+    contents += `
 TEST_TARGETS:=
 `
   }
@@ -102,7 +102,7 @@ PHONY_TARGETS+=qa
 
 const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = {}) => {
   // myVersion is used in the results and we don't want to do anything if there's a problem retrieving it.
-  const {myName, myVersion } = await getMyNameAndVersion({ cwd })
+  const { myName, myVersion } = await getMyNameAndVersion({ cwd })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
@@ -123,7 +123,7 @@ const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = 
   let tries = 0
   // even with proper awatis, the dir can take a little bit to fully appear
   while (tries < 20 && !existsSync(absMakeDir)) {
-    await new Promise(resolved => setTimeout(resolved, 10))
+    await new Promise(resolve => setTimeout(resolve, 10))
     tries += 1
   }
 
@@ -133,19 +133,17 @@ const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = 
 
   await fs.writeFile(absFinalTargetsScriptPath, finalTargetsContents)
 
-  const builder = '@liquid-labs/catalyst-lib-makefiles'
-
   return [ // any scripts we created
     {
-      builder: myName,
-      version: myVersion,
+      builder  : myName,
+      version  : myVersion,
       priority : 0,
       path     : relMakefile,
       purpose  : "Setup some basic configurion (like setting `.DELETE_ON_ERROR`) and then include everything matching 'make/*.mk'. This is he first standard script which sets up the basic framework."
     },
     {
-      builder: myName,
-      version: myVersion,
+      builder  : myName,
+      version  : myVersion,
       priority : 95,
       path     : relFinalTargetsScriptPath,
       purpose  : 'Defines standard all, build, doc, test, etc. based on the dependencies collected across the various scripts, e.g.: `build: $(BUILD_TARGETS)`, etc. This is the final standard script that ties everything together.'

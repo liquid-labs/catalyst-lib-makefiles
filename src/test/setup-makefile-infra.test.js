@@ -17,7 +17,7 @@ describe('setupMakefileInfra', () => {
 
   afterAll(async() => {
     process.chdir(process.env.HOME) // doesn't really matter but we get an error if we delete the dir we're in
-//    await fs.rm(tmpDir, { recursive : true })
+    //    await fs.rm(tmpDir, { recursive : true })
   })
 
   test("raises an error of no 'package.json' found", async() => {
