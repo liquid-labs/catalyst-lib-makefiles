@@ -11,27 +11,26 @@ describe('setupMakefileInfra', () => {
 
   beforeAll(async() => {
     tmpDir = fsPath.join(os.tmpdir(), 'catalyst-lib-makefiles-' + (Math.round(Math.random() * 10000000000000000)))
-    console.log('tmpDir:', tmpDir) // DEBUG
     await fs.mkdir(tmpDir, { recursive : true })
-    process.chdir(tmpDir)
+    await fs.writeFile(fsPath.join(tmpDir, 'package.json'), '{ "version": "1.0.0-test.0" }')
   })
 
   afterAll(async() => {
     process.chdir(process.env.HOME) // doesn't really matter but we get an error if we delete the dir we're in
-    await fs.rm(tmpDir, { recursive : true })
+//    await fs.rm(tmpDir, { recursive : true })
   })
 
   test("raises an error of no 'package.json' found", async() => {
     try {
-      await setupMakefileInfra()
+      await setupMakefileInfra({ cwd : __dirname })
       fail('setupMakefileInfra did not throw on missing package.json')
     }
     catch (e) {}
   })
 
-  test('produces expected output files', async() => {
-    await setupMakefileInfra({ ignorePackage : true })
-    expect(existsSync('Makefile')).toBe(true)
-    expect(existsSync(fsPath.join('make', '95-final-targets.mk'))).toBe(true)
+  test('produces expected output files (when ignoring package)', async() => {
+    await setupMakefileInfra({ cwd : tmpDir })
+    expect(existsSync(fsPath.join(tmpDir, 'Makefile'))).toBe(true)
+    expect(existsSync(fsPath.join(tmpDir, 'make', '95-final-targets.mk'))).toBe(true)
   })
 })

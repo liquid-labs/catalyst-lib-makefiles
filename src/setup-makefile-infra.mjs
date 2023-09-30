@@ -4,17 +4,43 @@ import * as fsPath from 'node:path'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
 
-const defineMakefileContents = ({ generatedFileNotice }) =>
-  `${generatedFileNotice}
+import { getMyNameAndVersion } from './lib/get-my-name-and-version'
+
+const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
+  let contents=`${generatedFileNotice}
 
 .DELETE_ON_ERROR:
 
 SHELL:=bash
 
+BUILD_TARGETS:=
+`
+
+  if (noDoc !== true) {
+    `
+DOC_TARGETS:=
+`
+  }
+
+  if (noLint !== true) {
+    `
+LINT_TARGETS:=
+`
+  }
+
+  if (noTest !== true) {
+    `
+TEST_TARGETS:=
+`
+  }
+
+  contents += `
 ifneq ($(wildcard make/*.mk),)
 include make/*.mk
 endif
 `
+  return contents
+}
 
 const defineFinalTargetsContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
   let contents = `${generatedFileNotice}
@@ -74,10 +100,9 @@ PHONY_TARGETS+=qa
   return contents
 }
 
-const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) => {
-  if (ignorePackage !== true && !existsSync('package.json')) {
-    throw new Error("Did not find 'package.json'. This command must be run from the root of a package; bailing out.")
-  } // else assume good to go
+const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = {}) => {
+  // myVersion is used in the results and we don't want to do anything if there's a problem retrieving it.
+  const {myName, myVersion } = await getMyNameAndVersion({ cwd })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
@@ -86,12 +111,46 @@ const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) 
 
   const finalTargetsContents = defineFinalTargetsContents({ generatedFileNotice, noDoc, noLint, noTest })
 
+  const relMakefile = 'Makefile'
+  const absMakefile = fsPath.join(cwd, relMakefile)
+  const relMakeDir = 'make'
+  const absMakeDir = fsPath.join(cwd, relMakeDir)
   Promise.all([
-    fs.mkdir('make'),
-    fs.writeFile('Makefile', makefileContents)
+    fs.mkdir(absMakeDir, { recursive : true }), // recursive has side effect of letting it be OK if dir exists
+    fs.writeFile(absMakefile, makefileContents)
   ])
 
-  await fs.writeFile(fsPath.join('make', '95-final-targets.mk'), finalTargetsContents)
+  let tries = 0
+  // even with proper awatis, the dir can take a little bit to fully appear
+  while (tries < 20 && !existsSync(absMakeDir)) {
+    await new Promise(resolved => setTimeout(resolved, 10))
+    tries += 1
+  }
+
+  // if the dir never appears, this fails
+  const relFinalTargetsScriptPath = fsPath.join(relMakeDir, '95-final-targets.mk')
+  const absFinalTargetsScriptPath = fsPath.join(cwd, relFinalTargetsScriptPath)
+
+  await fs.writeFile(absFinalTargetsScriptPath, finalTargetsContents)
+
+  const builder = '@liquid-labs/catalyst-lib-makefiles'
+
+  return [ // any scripts we created
+    {
+      builder: myName,
+      version: myVersion,
+      priority : 0,
+      path     : relMakefile,
+      purpose  : "Setup some basic configurion (like setting `.DELETE_ON_ERROR`) and then include everything matching 'make/*.mk'. This is he first standard script which sets up the basic framework."
+    },
+    {
+      builder: myName,
+      version: myVersion,
+      priority : 95,
+      path     : relFinalTargetsScriptPath,
+      purpose  : 'Defines standard all, build, doc, test, etc. based on the dependencies collected across the various scripts, e.g.: `build: $(BUILD_TARGETS)`, etc. This is the final standard script that ties everything together.'
+    }
+  ]
 }
 
 export { setupMakefileInfra }
