@@ -1,8 +1,8 @@
-import { existsSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
+import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
 import { getMyNameAndVersion } from './lib/get-my-name-and-version'
 
@@ -100,9 +100,8 @@ PHONY_TARGETS+=qa
   return contents
 }
 
-const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = {}) => {
-  // myVersion is used in the results and we don't want to do anything if there's a problem retrieving it.
-  const { myName, myVersion } = await getMyNameAndVersion({ cwd })
+const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } = {}) => {
+  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
@@ -111,42 +110,34 @@ const setupMakefileInfra = async({ cwd = process.cwd, noDoc, noLint, noTest } = 
 
   const finalTargetsContents = defineFinalTargetsContents({ generatedFileNotice, noDoc, noLint, noTest })
 
-  const relMakefile = 'Makefile'
-  const absMakefile = fsPath.join(cwd, relMakefile)
-  const relMakeDir = 'make'
-  const absMakeDir = fsPath.join(cwd, relMakeDir)
-  Promise.all([
-    fs.mkdir(absMakeDir, { recursive : true }), // recursive has side effect of letting it be OK if dir exists
-    fs.writeFile(absMakefile, makefileContents)
+  const makefilePriority = 0
+  const relMakefilePath = 'Makefile'
+  const absMakefilePath = fsPath.join(cwd, relMakefilePath)
+
+  await Promise.all([
+    fs.mkdir(fsPath.join(cwd, 'make')),
+    fs.writeFile(absMakefilePath, makefileContents)
   ])
 
-  let tries = 0
-  // even with proper awatis, the dir can take a little bit to fully appear
-  while (tries < 20 && !existsSync(absMakeDir)) {
-    await new Promise(resolve => setTimeout(resolve, 10))
-    tries += 1
-  }
+  const finalTargetsPriority = 95
+  const relFinalTargetsPath = fsPath.join('make', finalTargetsPriority + '-final-targets.mk')
+  const absFinalTargetsPath = fsPath.join(cwd, relFinalTargetsPath)
+  await fs.writeFile(absFinalTargetsPath, finalTargetsContents)
 
-  // if the dir never appears, this fails
-  const relFinalTargetsScriptPath = fsPath.join(relMakeDir, '95-final-targets.mk')
-  const absFinalTargetsScriptPath = fsPath.join(cwd, relFinalTargetsScriptPath)
-
-  await fs.writeFile(absFinalTargetsScriptPath, finalTargetsContents)
-
-  return [ // any scripts we created
+  return [
     {
       builder  : myName,
       version  : myVersion,
-      priority : 0,
-      path     : relMakefile,
-      purpose  : "Setup some basic configurion (like setting `.DELETE_ON_ERROR`) and then include everything matching 'make/*.mk'. This is he first standard script which sets up the basic framework."
+      priority : makefilePriority,
+      path     : relMakefilePath,
+      purpose  : "Sets up standardtarget vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
     },
     {
       builder  : myName,
       version  : myVersion,
-      priority : 95,
-      path     : relFinalTargetsScriptPath,
-      purpose  : 'Defines standard all, build, doc, test, etc. based on the dependencies collected across the various scripts, e.g.: `build: $(BUILD_TARGETS)`, etc. This is the final standard script that ties everything together.'
+      priority : finalTargetsPriority,
+      path     : relFinalTargetsPath,
+      purpose  : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
     }
   ]
 }
