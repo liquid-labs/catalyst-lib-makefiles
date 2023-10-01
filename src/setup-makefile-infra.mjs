@@ -4,8 +4,6 @@ import * as fsPath from 'node:path'
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
 import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
-import { getMyNameAndVersion } from './lib/get-my-name-and-version'
-
 const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
   let contents = `${generatedFileNotice}
 
