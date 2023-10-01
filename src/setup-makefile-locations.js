@@ -50,13 +50,13 @@ DOC_SRC:=${fullDocSrcPath}
 
   contents += `QA:=${qaPath}\n`
 
-  const [ myName, myVersion ] = await getPackageNameAndVersion({ pkgDir: cwd })
+  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
 
   const priority = 10
   const relLocationsScriptPath = fsPath.join('make', priority + '-locations.mk')
   const absLocationsScriptPath = fsPath.join(cwd, relLocationsScriptPath)
 
-  await fs.mkdir(fsPath.join(cwd, 'make'), { recursive: true })
+  await fs.mkdir(fsPath.join(cwd, 'make'), { recursive : true })
   await fs.writeFile(absLocationsScriptPath, contents)
 
   return [

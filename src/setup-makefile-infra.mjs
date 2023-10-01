@@ -80,7 +80,7 @@ const setupMakefileInfra = async({ cwd = process.cwd(), ignorePackage, noDoc, no
     throw new Error("Did not find 'package.json'. This command must be run from the root of a package; bailing out.")
   } // else assume good to go
 
-  const [ myName, myVersion ] = await getPackageNameAndVersion({ pkgDir: cwd })
+  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
@@ -105,18 +105,18 @@ const setupMakefileInfra = async({ cwd = process.cwd(), ignorePackage, noDoc, no
 
   return [
     {
-      builder : myName,
-      version : myVersion,
-      priority: makefilePriority,
-      path    : relMakefilePath,
-      purpose : "Sets up standardtarget vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
+      builder  : myName,
+      version  : myVersion,
+      priority : makefilePriority,
+      path     : relMakefilePath,
+      purpose  : "Sets up standardtarget vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
     },
     {
-      builder : myName,
-      version : myVersion,
-      priority: finalTargetsPriority,
-      path    : relFinalTargetsPath,
-      purpose : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
+      builder  : myName,
+      version  : myVersion,
+      priority : finalTargetsPriority,
+      path     : relFinalTargetsPath,
+      purpose  : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
     }
   ]
 }

@@ -26,14 +26,14 @@ describe('setupMakefileInfra', () => {
 
   test("raises an error of no 'package.json' found", async() => {
     try {
-      await setupMakefileInfra({ cwd: tmpDir })
+      await setupMakefileInfra({ cwd : tmpDir })
       fail('setupMakefileInfra did not throw on missing package.json')
     }
     catch (e) {}
   })
 
   test('produces expected output files', async() => {
-    await setupMakefileInfra({ cwd: tmpDir, ignorePackage : true })
+    await setupMakefileInfra({ cwd : tmpDir, ignorePackage : true })
     expect(existsSync(fsPath.join(tmpDir, 'Makefile'))).toBe(true)
     expect(existsSync(fsPath.join(tmpDir, 'make', '95-final-targets.mk'))).toBe(true)
   })
