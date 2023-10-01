@@ -24,7 +24,7 @@ describe('setupMakefileInfra', () => {
       await setupMakefileLocations({ cwd : tmpDir })
       fail('setupMakefileInfra did not throw on missing package.json')
     }
-    catch (e) { 
+    catch (e) {
       expect(e.message).toMatch(/^ENOENT.*package.json/)
     }
   })
