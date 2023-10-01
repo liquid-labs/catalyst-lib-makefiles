@@ -93,7 +93,7 @@ const setupMakefileInfra = async({ cwd = process.cwd(), ignorePackage, noDoc, no
   const relMakefilePath = 'Makefile'
   const absMakefilePath = fsPath.join(cwd, relMakefilePath)
 
-  Promise.all([
+  await Promise.all([
     fs.mkdir(fsPath.join(cwd, 'make')),
     fs.writeFile(absMakefilePath, makefileContents)
   ])
