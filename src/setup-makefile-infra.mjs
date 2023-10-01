@@ -128,7 +128,7 @@ const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } 
       version  : myVersion,
       priority : makefilePriority,
       path     : relMakefilePath,
-      purpose  : "Sets up standardtarget vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
+      purpose  : "Sets up standard target vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
     },
     {
       builder  : myName,
