@@ -75,11 +75,7 @@ PHONY_TARGETS+=qa
   return contents
 }
 
-const setupMakefileInfra = async({ cwd = process.cwd(), ignorePackage, noDoc, noLint, noTest } = {}) => {
-  if (ignorePackage !== true && !existsSync('package.json')) {
-    throw new Error("Did not find 'package.json'. This command must be run from the root of a package; bailing out.")
-  } // else assume good to go
-
+const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } = {}) => {
   const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
 
   const generatedFileNotice =

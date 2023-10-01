@@ -13,12 +13,6 @@ describe('setupMakefileInfra', () => {
     tmpDir = fsPath.join(os.tmpdir(), 'catalyst-lib-makefiles-' + (Math.round(Math.random() * 10000000000000000)))
     const srcDocPath = fsPath.join(tmpDir, 'src', 'doc')
     await fs.mkdir(srcDocPath, { recursive : true })
-    const packageContents = `{
-  "name": "@acme/foo",
-  "version": "1.0.1"
-}`
-    const pkgPath = fsPath.join(tmpDir, 'package.json')
-    await fs.writeFile(pkgPath, packageContents)
   })
 
   afterAll(async() => {
@@ -30,10 +24,18 @@ describe('setupMakefileInfra', () => {
       await setupMakefileLocations({ cwd : tmpDir })
       fail('setupMakefileInfra did not throw on missing package.json')
     }
-    catch (e) {}
+    catch (e) { 
+      expect(e.message).toMatch(/^ENOENT.*package.json/)
+    }
   })
 
   test('produces expected output files', async() => {
+    const packageContents = `{
+  "name": "@acme/foo",
+  "version": "1.0.1"
+}`
+    const pkgPath = fsPath.join(tmpDir, 'package.json')
+    await fs.writeFile(pkgPath, packageContents)
     await setupMakefileLocations({ cwd : tmpDir, ignorePackage : true })
     expect(existsSync(fsPath.join(tmpDir, 'make', '10-locations.mk'))).toBe(true)
   })
