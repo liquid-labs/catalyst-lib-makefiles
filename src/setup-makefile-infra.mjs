@@ -3,6 +3,7 @@ import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
+import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
 const defineMakefileContents = ({ generatedFileNotice }) =>
   `${generatedFileNotice}
@@ -74,10 +75,12 @@ PHONY_TARGETS+=qa
   return contents
 }
 
-const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) => {
+const setupMakefileInfra = async({ cwd = process.cwd(), ignorePackage, noDoc, noLint, noTest } = {}) => {
   if (ignorePackage !== true && !existsSync('package.json')) {
     throw new Error("Did not find 'package.json'. This command must be run from the root of a package; bailing out.")
   } // else assume good to go
+
+  const [ myName, myVersion ] = await getPackageNameAndVersion({ pkgDir: cwd })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
@@ -86,12 +89,36 @@ const setupMakefileInfra = async({ ignorePackage, noDoc, noLint, noTest } = {}) 
 
   const finalTargetsContents = defineFinalTargetsContents({ generatedFileNotice, noDoc, noLint, noTest })
 
+  const makefilePriority = 0
+  const relMakefilePath = 'Makefile'
+  const absMakefilePath = fsPath.join(cwd, relMakefilePath)
+
   Promise.all([
-    fs.mkdir('make'),
-    fs.writeFile('Makefile', makefileContents)
+    fs.mkdir(fsPath.join(cwd, 'make')),
+    fs.writeFile(absMakefilePath, makefileContents)
   ])
 
-  await fs.writeFile(fsPath.join('make', '95-final-targets.mk'), finalTargetsContents)
+  const finalTargetsPriority = 95
+  const relFinalTargetsPath = fsPath.join('make', finalTargetsPriority + '-final-targets.mk')
+  const absFinalTargetsPath = fsPath.join(cwd, relFinalTargetsPath)
+  await fs.writeFile(absFinalTargetsPath, finalTargetsContents)
+
+  return [
+    {
+      builder : myName,
+      version : myVersion,
+      priority: makefilePriority,
+      path    : relMakefilePath,
+      purpose : "Sets up standardtarget vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
+    },
+    {
+      builder : myName,
+      version : myVersion,
+      priority: finalTargetsPriority,
+      path    : relFinalTargetsPath,
+      purpose : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
+    }
+  ]
 }
 
 export { setupMakefileInfra }
