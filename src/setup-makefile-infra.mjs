@@ -4,17 +4,43 @@ import * as fsPath from 'node:path'
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
 import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
-const defineMakefileContents = ({ generatedFileNotice }) =>
-  `${generatedFileNotice}
+import { getMyNameAndVersion } from './lib/get-my-name-and-version'
+
+const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
+  let contents = `${generatedFileNotice}
 
 .DELETE_ON_ERROR:
 
 SHELL:=bash
 
+BUILD_TARGETS:=
+`
+
+  if (noDoc !== true) {
+    contents += `
+DOC_TARGETS:=
+`
+  }
+
+  if (noLint !== true) {
+    contents += `
+LINT_TARGETS:=
+`
+  }
+
+  if (noTest !== true) {
+    contents += `
+TEST_TARGETS:=
+`
+  }
+
+  contents += `
 ifneq ($(wildcard make/*.mk),)
 include make/*.mk
 endif
 `
+  return contents
+}
 
 const defineFinalTargetsContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
   let contents = `${generatedFileNotice}
