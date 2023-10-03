@@ -93,16 +93,16 @@ PHONY_TARGETS+=qa
   }
 
   contents += `
-.PHONY: $(PHONY_TARGETS)`
+.PHONY: $(PHONY_TARGETS)\n`
 
   return contents
 }
 
 const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } = {}) => {
-  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
+  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : __dirname })
 
   const generatedFileNotice =
-    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-lib-makefiles', commentToken : '#' })
+    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : myName, commentToken : '#' })
 
   const makefileContents = defineMakefileContents({ generatedFileNotice })
 
@@ -113,7 +113,7 @@ const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } 
   const absMakefilePath = fsPath.join(cwd, relMakefilePath)
 
   await Promise.all([
-    fs.mkdir(fsPath.join(cwd, 'make')),
+    fs.mkdir(fsPath.join(cwd, 'make'), { recursive : true }),
     fs.writeFile(absMakefilePath, makefileContents)
   ])
 
@@ -122,22 +122,25 @@ const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } 
   const absFinalTargetsPath = fsPath.join(cwd, relFinalTargetsPath)
   await fs.writeFile(absFinalTargetsPath, finalTargetsContents)
 
-  return [
-    {
-      builder  : myName,
-      version  : myVersion,
-      priority : makefilePriority,
-      path     : relMakefilePath,
-      purpose  : "Sets up standard target vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
-    },
-    {
-      builder  : myName,
-      version  : myVersion,
-      priority : finalTargetsPriority,
-      path     : relFinalTargetsPath,
-      purpose  : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
-    }
-  ]
+  return {
+    scripts :
+    [
+      {
+        builder  : myName,
+        version  : myVersion,
+        priority : makefilePriority,
+        path     : relMakefilePath,
+        purpose  : "Sets up standard target vars (like 'BUILD_TARGETS') and runs scripts from 'make'."
+      },
+      {
+        builder  : myName,
+        version  : myVersion,
+        priority : finalTargetsPriority,
+        path     : relFinalTargetsPath,
+        purpose  : "Sets up the final basic targets (like 'build') based on the target vars (like 'BUILD_TARGETS')."
+      }
+    ]
+  }
 }
 
 export { setupMakefileInfra }
