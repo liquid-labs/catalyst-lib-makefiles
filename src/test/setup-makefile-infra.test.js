@@ -1,4 +1,4 @@
-/* global afterAll beforeAll describe expect fail test */
+/* global afterAll beforeAll describe expect test */
 import { existsSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
@@ -16,16 +16,6 @@ describe('setupMakefileInfra', () => {
 
   afterAll(async() => {
     await fs.rm(tmpDir, { recursive : true })
-  })
-
-  test("raises an error of no 'package.json' found", async() => {
-    try {
-      await setupMakefileInfra({ cwd : tmpDir })
-      fail('setupMakefileInfra did not throw on missing package.json')
-    }
-    catch (e) {
-      expect(e.message).toMatch(/^ENOENT.*package.json/)
-    }
   })
 
   test('produces expected output files', async() => {

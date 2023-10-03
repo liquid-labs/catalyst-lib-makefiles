@@ -23,8 +23,10 @@ const setupMakefileLocations = async({
     throw createError.BadRequest(`Did not find source path '${srcPath}' in client working directory '${cwd}'; set 'srcPath' parameter for custom src path.`)
   }
 
+  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : __dirname })
+
   const generatedFileNotice =
-    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : '@liquid-labs/catalyst-builder-node', commentToken : '#' })
+    CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : myName, commentToken : '#' })
 
   let contents = `${generatedFileNotice}
 
@@ -50,8 +52,6 @@ DOC_SRC:=${fullDocSrcPath}
 
   contents += `QA:=${qaPath}\n`
 
-  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : cwd })
-
   const priority = 10
   const relLocationsScriptPath = fsPath.join('make', priority + '-locations.mk')
   const absLocationsScriptPath = fsPath.join(cwd, relLocationsScriptPath)
@@ -59,15 +59,18 @@ DOC_SRC:=${fullDocSrcPath}
   await fs.mkdir(fsPath.join(cwd, 'make'), { recursive : true })
   await fs.writeFile(absLocationsScriptPath, contents)
 
-  return [
-    {
-      builder : myName,
-      version : myVersion,
-      priority,
-      path    : relLocationsScriptPath,
-      purpose : 'Defines the most basic locations, like the source directory.'
-    }
-  ]
+  return {
+    scripts :
+      [
+        {
+          builder : myName,
+          version : myVersion,
+          priority,
+          path    : relLocationsScriptPath,
+          purpose : 'Defines the most basic locations, like the source directory.'
+        }
+      ]
+  }
 }
 
 export { setupMakefileLocations }
