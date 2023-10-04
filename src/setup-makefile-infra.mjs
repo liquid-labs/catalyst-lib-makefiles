@@ -11,6 +11,10 @@ const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) 
 
 SHELL:=bash
 
+default: all
+
+PHONY_TARGETS:=all default
+
 BUILD_TARGETS:=
 `
 
@@ -47,9 +51,7 @@ const defineFinalTargetsContents = ({ generatedFileNotice, noDoc, noLint, noTest
 
 build: $(BUILD_TARGETS)
 
-default: build
-
-PHONY_TARGETS+=build default
+PHONY_TARGETS+=build
 `
   if (noDoc !== true) {
     contents += `
