@@ -7,6 +7,8 @@ import * as os from 'node:os'
 import { setupMakefileLocations } from '../setup-makefile-locations'
 
 describe('setupMakefileInfra', () => {
+  const myName = '@acme/foo'
+  const myVersion = '1.0.1'
   let tmpDir
 
   beforeAll(async() => {
@@ -20,7 +22,7 @@ describe('setupMakefileInfra', () => {
 
   test("raises an error of no 'package.json' found", async() => {
     try {
-      await setupMakefileLocations({ cwd : tmpDir })
+      await setupMakefileLocations({ myName, myVersion, workingPkgRoot : tmpDir })
       fail('setupMakefileInfra did not throw on missing package.json')
     }
     catch (e) {
@@ -32,7 +34,7 @@ describe('setupMakefileInfra', () => {
     const srcDocPath = fsPath.join(tmpDir, 'src', 'doc')
     await fs.mkdir(srcDocPath, { recursive : true })
 
-    await setupMakefileLocations({ cwd : tmpDir, ignorePackage : true })
+    await setupMakefileLocations({ myName, myVersion, ignorePackage : true, workingPkgRoot : tmpDir })
     expect(existsSync(fsPath.join(tmpDir, 'make', '10-locations.mk'))).toBe(true)
   })
 })
