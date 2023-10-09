@@ -1,0 +1,17 @@
+Test git rev: 653f971aeb5bad2581fcbf316186f8037ce4eb52
+PASS test/setup-makefile-locations.test.js
+PASS test/setup-makefile-infra.test.js
+-----------------------------|---------|----------|---------|---------|-------------------
+File                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------|---------|----------|---------|---------|-------------------
+All files                    |   87.17 |    63.26 |   42.85 |   86.84 |                   
+ index.mjs                   |       0 |        0 |       0 |       0 | 1-2               
+ setup-makefile-infra.mjs    |   91.11 |    66.66 |   57.14 |    90.9 | 65,103-106        
+ setup-makefile-locations.js |   87.09 |    78.94 |      40 |   86.66 | 13-20,40          
+-----------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 2 passed, 2 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.33 s, estimated 1 s
+Ran all test suites.
