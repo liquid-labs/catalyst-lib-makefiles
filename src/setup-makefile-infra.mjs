@@ -2,7 +2,6 @@ import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
-import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
 const defineMakefileContents = ({ generatedFileNotice, noDoc, noLint, noTest }) => {
   let contents = `${generatedFileNotice}
@@ -100,9 +99,12 @@ PHONY_TARGETS+=qa
   return contents
 }
 
-const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } = {}) => {
-  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : __dirname })
-
+const setupMakefileInfra = async({
+  myName = throw new Error("Missing required option 'myName'."),
+  myVersion = throw new Error("Missing required option 'myVersion'."),
+  noDoc, noLint, noTest,
+  workingPkgRoot = throw new Error("Missing required option 'workingPkgRoot'.")
+} = {}) => {
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : myName, commentToken : '#' })
 
@@ -112,16 +114,14 @@ const setupMakefileInfra = async({ cwd = process.cwd(), noDoc, noLint, noTest } 
 
   const makefilePriority = 0
   const relMakefilePath = 'Makefile'
-  const absMakefilePath = fsPath.join(cwd, relMakefilePath)
+  const absMakefilePath = fsPath.join(workingPkgRoot, relMakefilePath)
 
-  await Promise.all([
-    fs.mkdir(fsPath.join(cwd, 'make'), { recursive : true }),
-    fs.writeFile(absMakefilePath, makefileContents)
-  ])
+  await fs.mkdir(fsPath.join(workingPkgRoot, 'make'), { recursive : true })
+  await fs.writeFile(absMakefilePath, makefileContents)
 
   const finalTargetsPriority = 95
   const relFinalTargetsPath = fsPath.join('make', finalTargetsPriority + '-final-targets.mk')
-  const absFinalTargetsPath = fsPath.join(cwd, relFinalTargetsPath)
+  const absFinalTargetsPath = fsPath.join(workingPkgRoot, relFinalTargetsPath)
   await fs.writeFile(absFinalTargetsPath, finalTargetsContents)
 
   return {

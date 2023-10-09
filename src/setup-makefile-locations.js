@@ -5,25 +5,24 @@ import * as fsPath from 'node:path'
 import createError from 'http-errors'
 
 import { CATALYST_GENERATED_FILE_NOTICE } from '@liquid-labs/catalyst-defaults'
-import { getPackageNameAndVersion } from '@liquid-labs/catalyst-lib-build'
 
 const setupMakefileLocations = async({
-  cwd = process.cwd(),
   distPath = 'dist',
   docBuildPath = 'doc',
   docSrcPath = 'doc',
+  myName = throw new Error("Missing required option 'myName'."),
+  myVersion = throw new Error("Missing required option 'myVersion'."),
   noDoc,
   noTest,
   qaPath = 'qa',
   srcPath = 'src',
-  testStagingPath = 'test-staging'
+  testStagingPath = 'test-staging',
+  workingPkgRoot = throw new Error("Missing required option 'workingPkgRoot'.")
 }) => {
-  const testSrcPath = fsPath.join(cwd, srcPath)
+  const testSrcPath = fsPath.join(workingPkgRoot, srcPath)
   if (!existsSync(testSrcPath)) {
-    throw createError.BadRequest(`Did not find source path '${srcPath}' in client working directory '${cwd}'; set 'srcPath' parameter for custom src path.`)
+    throw createError.BadRequest(`Did not find source path '${srcPath}' in client working directory '${workingPkgRoot}'; set 'srcPath' parameter for custom src path.`)
   }
-
-  const [myName, myVersion] = await getPackageNameAndVersion({ pkgDir : __dirname })
 
   const generatedFileNotice =
     CATALYST_GENERATED_FILE_NOTICE({ builderNPMName : myName, commentToken : '#' })
@@ -36,7 +35,7 @@ DIST:=${distPath}
   if (noDoc !== true) {
     const fullDocSrcPath = fsPath.join(srcPath, docSrcPath)
 
-    const testDocSrcPath = fsPath.join(cwd, fullDocSrcPath)
+    const testDocSrcPath = fsPath.join(workingPkgRoot, fullDocSrcPath)
     if (!existsSync(testDocSrcPath)) {
       throw createError.BadRequest(`Did not find expect document source path '${fullDocSrcPath}'; specify 'docSrcPath' or 'noDoc'.`)
     }
@@ -54,9 +53,9 @@ DOC_SRC:=${fullDocSrcPath}
 
   const priority = 10
   const relLocationsScriptPath = fsPath.join('make', priority + '-locations.mk')
-  const absLocationsScriptPath = fsPath.join(cwd, relLocationsScriptPath)
+  const absLocationsScriptPath = fsPath.join(workingPkgRoot, relLocationsScriptPath)
 
-  await fs.mkdir(fsPath.join(cwd, 'make'), { recursive : true })
+  await fs.mkdir(fsPath.join(workingPkgRoot, 'make'), { recursive : true })
   await fs.writeFile(absLocationsScriptPath, contents)
 
   return {

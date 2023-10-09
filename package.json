@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@liquid-labs/catalyst-defaults": "^1.0.0-alpha.5",
-    "@liquid-labs/catalyst-lib-build": "^1.0.0-alpha.3",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.6",
     "http-errors": "^2.0.0"
   }

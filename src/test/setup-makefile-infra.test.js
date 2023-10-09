@@ -19,14 +19,16 @@ describe('setupMakefileInfra', () => {
   })
 
   test('produces expected output files', async() => {
+    const myName = '@acme/foo'
+    const myVersion = '1.0.1'
     const packageContents = `{
-  "name": "@acme/foo",
-  "version": "1.0.1"
+  "name": "${myName}",
+  "version": "${myVersion}"
 }`
     const pkgPath = fsPath.join(tmpDir, 'package.json')
     await fs.writeFile(pkgPath, packageContents)
 
-    await setupMakefileInfra({ cwd : tmpDir })
+    await setupMakefileInfra({ myName, myVersion, workingPkgRoot : tmpDir })
     expect(existsSync(fsPath.join(tmpDir, 'Makefile'))).toBe(true)
     expect(existsSync(fsPath.join(tmpDir, 'make', '95-final-targets.mk'))).toBe(true)
   })
