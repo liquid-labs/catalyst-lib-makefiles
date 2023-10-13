@@ -59,7 +59,7 @@ DOC_SRC:=${fullDocSrcPath}
   await fs.writeFile(absLocationsScriptPath, contents)
 
   return {
-    scripts :
+    artifacts :
       [
         {
           builder : myName,
