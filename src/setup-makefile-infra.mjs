@@ -125,7 +125,7 @@ const setupMakefileInfra = async({
   await fs.writeFile(absFinalTargetsPath, finalTargetsContents)
 
   return {
-    scripts :
+    artifacts :
     [
       {
         builder  : myName,

@@ -1,10 +1,11 @@
 {
   "name": "@liquid-labs/catalyst-lib-makefiles",
   "version": "1.0.0-alpha.4",
-  "description": "",
+  "description": "A catalyst library for setting up basic Makefile infrastructure.",
   "main": "dist/catalyst-lib-makefiles.js",
   "files": [
-    "dist/"
+    "dist/",
+    "README.md"
   ],
   "scripts": {
     "build": "make",
@@ -27,10 +28,13 @@
   },
   "homepage": "https://github.com/liquid-labs/catalyst-lib-makefiles#readme",
   "devDependencies": {
-    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.22"
+    "@liquid-labs/catalyst-resource-babel-and-rollup": "^1.0.0-alpha.3",
+    "@liquid-labs/catalyst-resource-eslint": "^1.0.0-alpha.1",
+    "@liquid-labs/catalyst-resource-jest": "^1.0.0-alpha.3"
   },
   "dependencies": {
     "@liquid-labs/catalyst-defaults": "^1.0.0-alpha.5",
+    "@liquid-labs/catalyst-lib-build": "^1.0.0-alpha.11",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.6",
     "http-errors": "^2.0.0"
   }
