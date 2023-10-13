@@ -1,6 +1,6 @@
 {
   "name": "@liquid-labs/catalyst-lib-makefiles",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "A catalyst library for setting up basic Makefile infrastructure.",
   "main": "dist/catalyst-lib-makefiles.js",
   "files": [
