@@ -10,7 +10,7 @@ describe('setupMakefileInfra', () => {
   let tmpDir
 
   beforeAll(async() => {
-    tmpDir = fsPath.join(os.tmpdir(), 'catalyst-lib-makefiles-' + (Math.round(Math.random() * 10000000000000000)))
+    tmpDir = fsPath.join(os.tmpdir(), 'sdlc-lib-makefiles-' + (Math.round(Math.random() * 10000000000000000)))
     await fs.mkdir(tmpDir, { recursive : true })
   })
 

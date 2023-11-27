@@ -1,8 +1,8 @@
 {
-  "name": "@liquid-labs/catalyst-lib-makefiles",
+  "name": "@liquid-labs/sdlc-lib-makefiles",
   "version": "1.0.0-alpha.5",
-  "description": "A catalyst library for setting up basic Makefile infrastructure.",
-  "main": "dist/catalyst-lib-makefiles.js",
+  "description": "An SDLCPilot library for setting up basic Makefile infrastructure.",
+  "main": "dist/sdlc-lib-makefiles.js",
   "files": [
     "dist/",
     "README.md"
@@ -22,19 +22,22 @@
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "UNLICENSED",
-  "repository": "git+ssh://git@github.com/liquid-labs/catalyst-lib-makefiles.git",
-  "bugs": {
-    "url": "https://github.com/liquid-labs/catalyst-lib-makefiles/issues"
+  "repository": {
+    "url": "git+ssh://git@github.com/liquid-labs/sdlc-lib-makefiles.git",
+    "type": "git"
   },
-  "homepage": "https://github.com/liquid-labs/catalyst-lib-makefiles#readme",
+  "bugs": {
+    "url": "https://github.com/liquid-labs/sdlc-lib-makefiles/issues"
+  },
+  "homepage": "https://github.com/liquid-labs/sdlc-lib-makefiles#readme",
   "devDependencies": {
     "@liquid-labs/catalyst-resource-babel-and-rollup": "^1.0.0-alpha.3",
     "@liquid-labs/catalyst-resource-eslint": "^1.0.0-alpha.1",
-    "@liquid-labs/catalyst-resource-jest": "^1.0.0-alpha.3"
+    "@liquid-labs/catalyst-resource-jest": "^1.0.0-alpha.4"
   },
   "dependencies": {
     "@liquid-labs/catalyst-defaults": "^1.0.0-alpha.5",
-    "@liquid-labs/catalyst-lib-build": "^1.0.0-alpha.11",
+    "@liquid-labs/sdlc-lib-build": "^1.0.0-alpha.13",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.6",
     "http-errors": "^2.0.0"
   }
