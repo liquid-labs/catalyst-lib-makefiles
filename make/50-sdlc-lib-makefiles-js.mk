@@ -5,7 +5,7 @@
 # build dist/catalyst-lib-makefiles.js
 #####
 
-CATALYST_CATALYST_LIB_MAKEFILES_JS:=$(DIST)/catalyst-lib-makefiles.js
+CATALYST_CATALYST_LIB_MAKEFILES_JS:=$(DIST)/sdlc-lib-makefiles.js
 CATALYST_CATALYST_LIB_MAKEFILES_JS_ENTRY=$(SRC)/index.mjs
 BUILD_TARGETS+=$(CATALYST_CATALYST_LIB_MAKEFILES_JS)
 
