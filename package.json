@@ -1,6 +1,6 @@
 {
   "name": "@liquid-labs/sdlc-lib-makefiles",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "description": "An SDLCPilot library for setting up basic Makefile infrastructure.",
   "main": "dist/sdlc-lib-makefiles.js",
   "files": [
