@@ -35,11 +35,6 @@ DIST:=${distPath}
   if (noDoc !== true) {
     const fullDocSrcPath = fsPath.join(srcPath, docSrcPath)
 
-    const testDocSrcPath = fsPath.join(workingPkgRoot, fullDocSrcPath)
-    if (!existsSync(testDocSrcPath)) {
-      throw createError.BadRequest(`Did not find expect document source path '${fullDocSrcPath}'; specify 'docSrcPath' or 'noDoc'.`)
-    }
-
     contents += `DOC:=${docSrcPath}
 DOC_SRC:=${fullDocSrcPath}
 `
