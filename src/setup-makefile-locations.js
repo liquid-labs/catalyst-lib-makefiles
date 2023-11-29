@@ -35,8 +35,6 @@ DIST:=${distPath}
   if (noDoc !== true) {
     const fullDocSrcPath = fsPath.join(srcPath, docSrcPath)
 
-    const testDocSrcPath = fsPath.join(workingPkgRoot, fullDocSrcPath)
-
     contents += `DOC:=${docSrcPath}
 DOC_SRC:=${fullDocSrcPath}
 `
